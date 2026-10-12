@@ -2,7 +2,8 @@
 
 import { Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
-import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useRef } from "react";
+import { useSidebar } from "../sidebar-context";
 import { BrandMark, SidebarHeader, type SidebarUser } from "./sidebar-header";
 import { SidebarNavigation } from "./sidebar-navigation";
 
@@ -14,12 +15,23 @@ type DashboardSidebarProps = {
 type SidebarContentProps = DashboardSidebarProps & {
   pathname: string;
   onNavigate?: () => void;
+  onCollapse?: () => void;
 };
 
-function SidebarContent({ pathname, workspaceName, user, onNavigate }: SidebarContentProps) {
+function SidebarContent({
+  pathname,
+  workspaceName,
+  user,
+  onNavigate,
+  onCollapse,
+}: SidebarContentProps) {
   return (
     <div className="flex h-full min-h-0 flex-col bg-white">
-      <SidebarHeader workspaceName={workspaceName} user={user} />
+      <SidebarHeader
+        workspaceName={workspaceName}
+        user={user}
+        onCollapse={onCollapse}
+      />
       <SidebarNavigation pathname={pathname} onNavigate={onNavigate} />
     </div>
   );
@@ -27,20 +39,31 @@ function SidebarContent({ pathname, workspaceName, user, onNavigate }: SidebarCo
 
 export function DashboardSidebar({ workspaceName, user }: DashboardSidebarProps) {
   const pathname = usePathname();
-  const [openPathname, setOpenPathname] = useState<string | null>(null);
-  const isOpen = openPathname === pathname;
+  const {
+    isOpen,
+    isMobileOpen,
+    openMobileSidebar,
+    closeMobileSidebar,
+    closeSidebar,
+  } = useSidebar();
+
   const dialogId = useId();
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const mobileDialogRef = useRef<HTMLElement>(null);
 
-  const closeSidebar = useCallback(({ restoreFocus = true } = {}) => {
-    setOpenPathname(null);
-    if (restoreFocus) window.requestAnimationFrame(() => menuButtonRef.current?.focus());
-  }, []);
+  // Close mobile drawer on navigation
+  useEffect(() => {
+    closeMobileSidebar();
+  }, [pathname, closeMobileSidebar]);
+
+  const handleCloseMobile = useCallback(() => {
+    closeMobileSidebar();
+    window.requestAnimationFrame(() => menuButtonRef.current?.focus());
+  }, [closeMobileSidebar]);
 
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isMobileOpen) return;
 
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -48,7 +71,7 @@ export function DashboardSidebar({ workspaceName, user }: DashboardSidebarProps)
 
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
-        closeSidebar();
+        handleCloseMobile();
         return;
       }
 
@@ -75,10 +98,11 @@ export function DashboardSidebar({ workspaceName, user }: DashboardSidebarProps)
       window.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = previousOverflow;
     };
-  }, [closeSidebar, isOpen]);
+  }, [handleCloseMobile, isMobileOpen]);
 
   return (
     <>
+      {/* Mobile Top Header */}
       <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-slate-200 bg-white px-4 lg:hidden">
         <div className="flex items-center gap-2.5">
           <BrandMark />
@@ -88,53 +112,78 @@ export function DashboardSidebar({ workspaceName, user }: DashboardSidebarProps)
           ref={menuButtonRef}
           type="button"
           aria-label="Open dashboard navigation"
-          aria-expanded={isOpen}
+          aria-expanded={isMobileOpen}
           aria-controls={dialogId}
-          onClick={() => setOpenPathname(pathname)}
+          onClick={openMobileSidebar}
           className="grid size-10 place-items-center rounded-lg text-slate-600 outline-none transition-colors hover:bg-slate-100 hover:text-slate-950 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2"
         >
           <Menu aria-hidden="true" className="size-5" />
         </button>
       </header>
 
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-[280px] border-r border-zinc-200 bg-white lg:block">
-        <SidebarContent pathname={pathname} workspaceName={workspaceName} user={user} />
+      {/* Desktop Persistent Smoothly Collapsible Sidebar */}
+      <aside
+        aria-hidden={!isOpen}
+        inert={!isOpen ? true : undefined}
+        className={`fixed inset-y-4 left-4 z-30 hidden w-[280px] overflow-hidden rounded-3xl border border-zinc-200/70 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.03)] transition-all duration-300 ease-in-out lg:block ${
+          isOpen
+            ? "translate-x-0 opacity-100 pointer-events-auto"
+            : "-translate-x-[calc(100%+32px)] opacity-0 pointer-events-none"
+        }`}
+      >
+        <SidebarContent
+          pathname={pathname}
+          workspaceName={workspaceName}
+          user={user}
+          onCollapse={closeSidebar}
+        />
       </aside>
 
-      {isOpen ? (
-        <div className="fixed inset-0 z-50 lg:hidden">
+      {/* Mobile Smooth Slide-out Drawer */}
+      <div
+        className={`fixed inset-0 z-50 lg:hidden transition-all duration-300 ease-in-out ${
+          isMobileOpen ? "visible pointer-events-auto" : "invisible pointer-events-none"
+        }`}
+        aria-hidden={!isMobileOpen}
+        inert={!isMobileOpen ? true : undefined}
+      >
+        <button
+          type="button"
+          tabIndex={isMobileOpen ? 0 : -1}
+          aria-label="Close dashboard navigation"
+          className={`absolute inset-0 bg-slate-950/35 backdrop-blur-[1px] transition-opacity duration-300 ease-in-out ${
+            isMobileOpen ? "opacity-100" : "opacity-0"
+          }`}
+          onClick={handleCloseMobile}
+        />
+        <aside
+          ref={mobileDialogRef}
+          id={dialogId}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Dashboard navigation"
+          className={`relative h-full w-[min(86vw,280px)] border-r border-zinc-200 bg-white shadow-2xl shadow-zinc-950/15 transition-transform duration-300 ease-in-out transform ${
+            isMobileOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
+        >
           <button
+            ref={closeButtonRef}
             type="button"
+            tabIndex={isMobileOpen ? 0 : -1}
             aria-label="Close dashboard navigation"
-            className="absolute inset-0 bg-slate-950/35 backdrop-blur-[1px]"
-            onClick={() => closeSidebar()}
-          />
-          <aside
-            ref={mobileDialogRef}
-            id={dialogId}
-            role="dialog"
-            aria-modal="true"
-            aria-label="Dashboard navigation"
-            className="relative h-full w-[min(86vw,280px)] border-r border-zinc-200 bg-white shadow-2xl shadow-zinc-950/15"
+            onClick={handleCloseMobile}
+            className="absolute left-[calc(100%-18px)] top-4 z-30 grid size-9 place-items-center rounded-lg bg-white text-zinc-500 shadow-lg outline-none transition-colors hover:bg-zinc-100 hover:text-zinc-950 focus-visible:ring-2 focus-visible:ring-zinc-900 focus-visible:ring-offset-2"
           >
-            <button
-              ref={closeButtonRef}
-              type="button"
-              aria-label="Close dashboard navigation"
-              onClick={() => closeSidebar()}
-              className="absolute left-[calc(100%-18px)] top-4 z-30 grid size-9 place-items-center rounded-lg bg-white text-zinc-500 shadow-lg outline-none transition-colors hover:bg-zinc-100 hover:text-zinc-950 focus-visible:ring-2 focus-visible:ring-zinc-900 focus-visible:ring-offset-2"
-            >
-              <X aria-hidden="true" className="size-5" />
-            </button>
-            <SidebarContent
-              pathname={pathname}
-              workspaceName={workspaceName}
-              user={user}
-              onNavigate={() => closeSidebar({ restoreFocus: false })}
-            />
-          </aside>
-        </div>
-      ) : null}
+            <X aria-hidden="true" className="size-5" />
+          </button>
+          <SidebarContent
+            pathname={pathname}
+            workspaceName={workspaceName}
+            user={user}
+            onNavigate={handleCloseMobile}
+          />
+        </aside>
+      </div>
     </>
   );
 }
