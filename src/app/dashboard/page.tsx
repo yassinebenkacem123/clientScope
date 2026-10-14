@@ -1,5 +1,7 @@
 import { GrowthOverviewChart } from "@/components/dashboard/overview/growth-overview-chart";
+import { ProjectProgressChart } from "@/components/dashboard/overview/project-progress-chart";
 import { StatCard } from "@/components/dashboard/overview/stat-card";
+import { UpcomingDeadlinesCard } from "@/components/dashboard/overview/upcoming-deadlines-card";
 import { CircleCheckBig, FolderKanban, HandCoins, UsersRound } from "lucide-react";
 
 const overviewStats = [
@@ -40,15 +42,31 @@ const overviewStats = [
 export default function DashboardPage() {
   return (
     <section aria-labelledby="dashboard-heading">
+      <h1 id="dashboard-heading" className="sr-only">
+        Overview
+      </h1>
 
-
+      {/* Overview Stat Cards */}
       <div className="mt-7 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {overviewStats.map((stat) => (
           <StatCard key={stat.label} {...stat} />
         ))}
       </div>
 
-      <GrowthOverviewChart />
+      {/* Row 1: Growth Analytics & Upcoming Deadlines */}
+      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-12">
+        <div className="lg:col-span-7 xl:col-span-8">
+          <GrowthOverviewChart className="h-full" />
+        </div>
+        <div className="lg:col-span-5 xl:col-span-4">
+          <UpcomingDeadlinesCard className="h-full" />
+        </div>
+      </div>
+
+      {/* Row 2: Project Progress Stacked Chart */}
+      <div className="mt-6">
+        <ProjectProgressChart />
+      </div>
     </section>
   );
 }

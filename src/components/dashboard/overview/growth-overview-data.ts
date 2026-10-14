@@ -1,64 +1,56 @@
-export const growthPeriods = ["7d", "30d", "6m", "12m"] as const;
+export type OverviewTab = "users" | "projects" | "status";
 
-export type GrowthPeriod = (typeof growthPeriods)[number];
-export type GrowthMetric = "projects" | "clients";
-
-export type GrowthDataPoint = {
-  date: string;
-  projects: number;
-  clients: number;
+export type OverviewChartPoint = {
+  month: string;
+  thisYear: number;
+  lastYear: number;
 };
 
-export type GrowthDataByPeriod = Record<GrowthPeriod, GrowthDataPoint[]>;
-
-export const growthPeriodLabels: Record<GrowthPeriod, string> = {
-  "7d": "Last 7 days",
-  "30d": "Last 30 days",
-  "6m": "Last 6 months",
-  "12m": "Last 12 months",
-};
-
-// Deterministic cumulative mock data. Each range includes the opening balance
-// from records created before that period and ends at the same current total.
-export const mockGrowthData: GrowthDataByPeriod = {
-  "7d": [
-    { date: "2026-10-08", projects: 33, clients: 22 },
-    { date: "2026-10-09", projects: 33, clients: 22 },
-    { date: "2026-10-10", projects: 34, clients: 22 },
-    { date: "2026-10-11", projects: 34, clients: 23 },
-    { date: "2026-10-12", projects: 35, clients: 23 },
-    { date: "2026-10-13", projects: 35, clients: 23 },
-    { date: "2026-10-14", projects: 36, clients: 24 },
-  ],
-  "30d": [
-    { date: "2026-09-15", projects: 29, clients: 19 },
-    { date: "2026-09-20", projects: 30, clients: 20 },
-    { date: "2026-09-25", projects: 31, clients: 20 },
-    { date: "2026-09-30", projects: 32, clients: 21 },
-    { date: "2026-10-05", projects: 33, clients: 22 },
-    { date: "2026-10-10", projects: 34, clients: 22 },
-    { date: "2026-10-14", projects: 36, clients: 24 },
-  ],
-  "6m": [
-    { date: "2026-05-01", projects: 18, clients: 12 },
-    { date: "2026-06-01", projects: 21, clients: 14 },
-    { date: "2026-07-01", projects: 24, clients: 16 },
-    { date: "2026-08-01", projects: 28, clients: 18 },
-    { date: "2026-09-01", projects: 31, clients: 21 },
-    { date: "2026-10-01", projects: 36, clients: 24 },
-  ],
-  "12m": [
-    { date: "2025-11-01", projects: 8, clients: 5 },
-    { date: "2025-12-01", projects: 10, clients: 6 },
-    { date: "2026-01-01", projects: 12, clients: 8 },
-    { date: "2026-02-01", projects: 14, clients: 9 },
-    { date: "2026-03-01", projects: 16, clients: 11 },
-    { date: "2026-04-01", projects: 18, clients: 12 },
-    { date: "2026-05-01", projects: 21, clients: 14 },
-    { date: "2026-06-01", projects: 24, clients: 16 },
-    { date: "2026-07-01", projects: 27, clients: 18 },
-    { date: "2026-08-01", projects: 30, clients: 20 },
-    { date: "2026-09-01", projects: 33, clients: 22 },
-    { date: "2026-10-01", projects: 36, clients: 24 },
-  ],
+export const overviewTabData: Record<
+  OverviewTab,
+  {
+    title: string;
+    points: OverviewChartPoint[];
+    unit: string;
+  }
+> = {
+  users: {
+    title: "Total Users",
+    unit: "users",
+    points: [
+      { month: "Jan", thisYear: 11800, lastYear: 4500 },
+      { month: "Feb", thisYear: 7800, lastYear: 12400 },
+      { month: "Mar", thisYear: 14200, lastYear: 20500 },
+      { month: "Apr", thisYear: 24600, lastYear: 6800 },
+      { month: "May", thisYear: 28400, lastYear: 14800 },
+      { month: "Jun", thisYear: 22800, lastYear: 24800 },
+      { month: "Jul", thisYear: 24100, lastYear: 31200 },
+    ],
+  },
+  projects: {
+    title: "Total Projects",
+    unit: "projects",
+    points: [
+      { month: "Jan", thisYear: 8400, lastYear: 5200 },
+      { month: "Feb", thisYear: 12200, lastYear: 9800 },
+      { month: "Mar", thisYear: 16800, lastYear: 13400 },
+      { month: "Apr", thisYear: 21500, lastYear: 11200 },
+      { month: "May", thisYear: 26000, lastYear: 18500 },
+      { month: "Jun", thisYear: 28900, lastYear: 23100 },
+      { month: "Jul", thisYear: 32400, lastYear: 27800 },
+    ],
+  },
+  status: {
+    title: "Operating Status",
+    unit: "tasks",
+    points: [
+      { month: "Jan", thisYear: 9500, lastYear: 6200 },
+      { month: "Feb", thisYear: 14800, lastYear: 11500 },
+      { month: "Mar", thisYear: 18200, lastYear: 15400 },
+      { month: "Apr", thisYear: 22100, lastYear: 14000 },
+      { month: "May", thisYear: 25400, lastYear: 19800 },
+      { month: "Jun", thisYear: 27100, lastYear: 22400 },
+      { month: "Jul", thisYear: 29800, lastYear: 28500 },
+    ],
+  },
 };
