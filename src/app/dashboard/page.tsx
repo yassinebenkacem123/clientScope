@@ -1,5 +1,7 @@
+import { CompletedTasksChart } from "@/components/dashboard/overview/completed-tasks-chart";
 import { GrowthOverviewChart } from "@/components/dashboard/overview/growth-overview-chart";
 import { ProjectProgressChart } from "@/components/dashboard/overview/project-progress-chart";
+import { RecentProjectsTable } from "@/components/dashboard/overview/recent-projects-table";
 import { StatCard } from "@/components/dashboard/overview/stat-card";
 import { UpcomingDeadlinesCard } from "@/components/dashboard/overview/upcoming-deadlines-card";
 import { CircleCheckBig, FolderKanban, HandCoins, UsersRound } from "lucide-react";
@@ -46,14 +48,14 @@ export default function DashboardPage() {
         Overview
       </h1>
 
-      {/* Overview Stat Cards */}
+      {/* Top KPI Stat Cards */}
       <div className="mt-7 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {overviewStats.map((stat) => (
           <StatCard key={stat.label} {...stat} />
         ))}
       </div>
 
-      {/* Row 1: Growth Analytics & Upcoming Deadlines */}
+      {/* Analytics Row 1: Growth Analytics & Upcoming Deadlines */}
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-12">
         <div className="lg:col-span-7 xl:col-span-8">
           <GrowthOverviewChart className="h-full" />
@@ -63,9 +65,19 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Row 2: Project Progress Stacked Chart */}
+      {/* Analytics Row 2: Project Progress & Completed Tasks Donut */}
+      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-12">
+        <div className="lg:col-span-7 xl:col-span-7">
+          <ProjectProgressChart className="h-full" />
+        </div>
+        <div className="lg:col-span-5 xl:col-span-5">
+          <CompletedTasksChart className="h-full" />
+        </div>
+      </div>
+
+      {/* Bottom Section: Recent Projects Table */}
       <div className="mt-6">
-        <ProjectProgressChart />
+        <RecentProjectsTable />
       </div>
     </section>
   );
