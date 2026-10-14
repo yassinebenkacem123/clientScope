@@ -26,7 +26,7 @@ function SidebarContent({
   onCollapse,
 }: SidebarContentProps) {
   return (
-    <div className="flex h-full min-h-0 flex-col bg-white">
+    <div className="flex h-full min-h-0 flex-col bg-white dark:bg-zinc-900 transition-colors duration-200">
       <SidebarHeader
         workspaceName={workspaceName}
         user={user}
@@ -103,10 +103,10 @@ export function DashboardSidebar({ workspaceName, user }: DashboardSidebarProps)
   return (
     <>
       {/* Mobile Top Header */}
-      <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-slate-200 bg-white px-4 lg:hidden">
+      <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-slate-200 bg-white px-4 dark:border-zinc-800 dark:bg-zinc-900 transition-colors duration-200 lg:hidden">
         <div className="flex items-center gap-2.5">
           <BrandMark />
-          <span className="font-semibold tracking-[-0.02em] text-slate-950">ClientScope</span>
+          <span className="font-semibold tracking-[-0.02em] text-slate-950 dark:text-zinc-100">ClientScope</span>
         </div>
         <button
           ref={menuButtonRef}
@@ -115,7 +115,7 @@ export function DashboardSidebar({ workspaceName, user }: DashboardSidebarProps)
           aria-expanded={isMobileOpen}
           aria-controls={dialogId}
           onClick={openMobileSidebar}
-          className="grid size-10 place-items-center rounded-lg text-slate-600 outline-none transition-colors hover:bg-slate-100 hover:text-slate-950 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2"
+          className="grid size-10 place-items-center rounded-lg text-slate-600 outline-none transition-colors hover:bg-slate-100 hover:text-slate-950 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
         >
           <Menu aria-hidden="true" className="size-5" />
         </button>
@@ -125,7 +125,7 @@ export function DashboardSidebar({ workspaceName, user }: DashboardSidebarProps)
       <aside
         aria-hidden={!isOpen}
         inert={!isOpen ? true : undefined}
-        className={`fixed inset-y-4 left-4 z-30 hidden w-[280px] overflow-hidden rounded-3xl border border-zinc-200/70 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.03)] transition-all duration-300 ease-in-out lg:block ${
+        className={`fixed inset-y-4 left-4 z-30 hidden w-[280px] overflow-hidden rounded-3xl border border-zinc-200/70 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.03)] transition-all duration-300 ease-in-out dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-none lg:block ${
           isOpen
             ? "translate-x-0 opacity-100 pointer-events-auto"
             : "-translate-x-[calc(100%+32px)] opacity-0 pointer-events-none"
@@ -151,7 +151,7 @@ export function DashboardSidebar({ workspaceName, user }: DashboardSidebarProps)
           type="button"
           tabIndex={isMobileOpen ? 0 : -1}
           aria-label="Close dashboard navigation"
-          className={`absolute inset-0 bg-slate-950/35 backdrop-blur-[1px] transition-opacity duration-300 ease-in-out ${
+          className={`absolute inset-0 bg-slate-950/35 backdrop-blur-[1px] dark:bg-black/60 transition-opacity duration-300 ease-in-out ${
             isMobileOpen ? "opacity-100" : "opacity-0"
           }`}
           onClick={handleCloseMobile}
@@ -162,7 +162,7 @@ export function DashboardSidebar({ workspaceName, user }: DashboardSidebarProps)
           role="dialog"
           aria-modal="true"
           aria-label="Dashboard navigation"
-          className={`relative h-full w-[min(86vw,280px)] border-r border-zinc-200 bg-white shadow-2xl shadow-zinc-950/15 transition-transform duration-300 ease-in-out transform ${
+          className={`relative h-full w-[min(86vw,280px)] border-r border-zinc-200 bg-white shadow-2xl shadow-zinc-950/15 dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-zinc-950/40 transition-transform duration-300 ease-in-out transform ${
             isMobileOpen ? "translate-x-0" : "-translate-x-full"
           }`}
         >
@@ -172,7 +172,7 @@ export function DashboardSidebar({ workspaceName, user }: DashboardSidebarProps)
             tabIndex={isMobileOpen ? 0 : -1}
             aria-label="Close dashboard navigation"
             onClick={handleCloseMobile}
-            className="absolute left-[calc(100%-18px)] top-4 z-30 grid size-9 place-items-center rounded-lg bg-white text-zinc-500 shadow-lg outline-none transition-colors hover:bg-zinc-100 hover:text-zinc-950 focus-visible:ring-2 focus-visible:ring-zinc-900 focus-visible:ring-offset-2"
+            className="absolute left-[calc(100%-18px)] top-4 z-30 grid size-9 place-items-center rounded-lg bg-white text-zinc-500 shadow-lg outline-none transition-colors hover:bg-zinc-100 hover:text-zinc-950 focus-visible:ring-2 focus-visible:ring-zinc-900 focus-visible:ring-offset-2 dark:border dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700 dark:hover:text-white dark:focus-visible:ring-zinc-400"
           >
             <X aria-hidden="true" className="size-5" />
           </button>

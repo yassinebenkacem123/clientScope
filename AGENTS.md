@@ -32,3 +32,5 @@ Show: changed files; commands run; schema validation status; client generation s
 - Client must not approve arbitrary extra work by creating a ticket; approval occurs on explicit quote/scope versions.
 - Do not add smart requirements AI, automated scope-creep detection, or dependency/delay tracking yet.
 - Do not use Prisma directly from the browser; all Prisma access must be trusted server code.
+- **Theme parity (Dark and Light mode)**: Whenever writing or modifying UI components, layouts, pages, or widgets, always implement complete support for both Light Mode and Dark Mode. Never write single-mode CSS or Tailwind classes without their `dark:` counterparts. Refer to `.agents/rules/dark-light-mode.md` and `.agents/skills/dark-light-mode/SKILL.md`.
+

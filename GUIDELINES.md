@@ -19,6 +19,8 @@ Next.js App Router, TypeScript strict, React, Tailwind CSS v4, Prisma ORM v7, Po
 - Avoid prematurely building generic workflows and unnecessary dependencies.
 - Keep secrets in `.env` or deployment secret store, never commit `.env` or log its values.
 - Use minimal tests that verify meaningful behavior, no fake success messages.
+- Theme parity: All UI components, pages, and interactive views must support both Light and Dark mode using Tailwind CSS v4 `dark:` classes and `ThemeProvider`. Always test and verify contrast in both modes.
+
 
 ## Prisma specifics
 - Prisma v7: datasource provider belongs in `schema.prisma`; database URL is configured in `prisma.config.ts`.

@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, ChevronsUpDown, PanelLeftClose } from "lucide-react";
+import { PanelLeftClose } from "lucide-react";
 
 export type SidebarUser = {
   name: string;
@@ -16,19 +16,10 @@ export const DEFAULT_USER: SidebarUser = {
 };
 
 type SidebarHeaderProps = {
-  workspaceName: string;
+  workspaceName?: string;
   user?: SidebarUser;
   onCollapse?: () => void;
 };
-
-function getInitials(name: string) {
-  return name
-    .trim()
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join("");
-}
 
 export function BrandMark() {
   return (
@@ -39,22 +30,15 @@ export function BrandMark() {
 }
 
 export function SidebarHeader({
-  workspaceName,
-  user = DEFAULT_USER,
   onCollapse,
 }: SidebarHeaderProps) {
-  const currentUser = user ?? DEFAULT_USER;
-  const displayName = currentUser.name || workspaceName;
-  const eyebrow = currentUser.role || "ClientScope";
-  const avatarUrl = currentUser.avatarUrl ?? DEFAULT_USER.avatarUrl;
-
   return (
-    <div className="shrink-0 border-b border-zinc-100 px-4 pt-4 pb-3">
+    <div className="shrink-0 border-b border-zinc-100 px-4 pt-4 pb-3 dark:border-zinc-800">
       {/* Top brand and desktop collapse button row */}
       <div className="mb-3 flex items-center justify-between px-1">
         <div className="flex items-center gap-2.5">
           <div className="flex flex-col">
-            <span className="text-[14px] font-semibold tracking-[-0.015em] text-zinc-950">
+            <span className="text-[14px] font-semibold tracking-[-0.015em] text-zinc-950 dark:text-zinc-100">
               ClientScope
             </span>
           </div>
@@ -69,13 +53,12 @@ export function SidebarHeader({
             }}
             aria-label="Collapse sidebar (Ctrl+B)"
             title="Collapse sidebar (Ctrl+B)"
-            className="hidden size-8 place-items-center rounded-lg text-zinc-400 outline-none transition-colors hover:bg-zinc-100 hover:text-zinc-700 focus-visible:ring-2 focus-visible:ring-zinc-900 focus-visible:ring-offset-2 lg:grid"
+            className="hidden size-8 place-items-center rounded-lg text-zinc-400 outline-none transition-colors hover:bg-zinc-100 hover:text-zinc-700 focus-visible:ring-2 focus-visible:ring-zinc-900 focus-visible:ring-offset-2 dark:text-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-zinc-200 dark:focus-visible:ring-zinc-400 lg:grid"
           >
             <PanelLeftClose aria-hidden="true" className="size-[17px]" strokeWidth={1.75} />
           </button>
         ) : null}
       </div>
-
     </div>
   );
 }

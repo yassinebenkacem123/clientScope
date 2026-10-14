@@ -19,7 +19,7 @@ export function SidebarNavigation({ pathname, onNavigate }: SidebarNavigationPro
             <section key={group.label} aria-labelledby={`sidebar-${group.label.replace(" ", "-")}`}>
               <h2
                 id={`sidebar-${group.label.replace(" ", "-")}`}
-                className="mb-2.5 px-3 text-[11px] font-medium uppercase tracking-[0.08em] text-zinc-400"
+                className="mb-2.5 px-3 text-[11px] font-medium uppercase tracking-[0.08em] text-zinc-400 dark:text-zinc-500"
               >
                 {group.label}
               </h2>
@@ -38,14 +38,14 @@ export function SidebarNavigation({ pathname, onNavigate }: SidebarNavigationPro
         </div>
       </div>
 
-      <div className="shrink-0 border-t border-zinc-100 px-6 py-6">
+      <div className="shrink-0 border-t border-zinc-100 px-6 py-6 dark:border-zinc-800">
         <section
           key={workspaceGroup.label}
           aria-labelledby={`sidebar-${workspaceGroup.label.replace(" ", "-")}`}
         >
           <h2
             id={`sidebar-${workspaceGroup.label.replace(" ", "-")}`}
-            className="mb-2.5 px-3 text-[11px] font-medium uppercase tracking-[0.08em] text-zinc-400"
+            className="mb-2.5 px-3 text-[11px] font-medium uppercase tracking-[0.08em] text-zinc-400 dark:text-zinc-500"
           >
             {workspaceGroup.label}
           </h2>
