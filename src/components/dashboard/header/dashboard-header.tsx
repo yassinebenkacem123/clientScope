@@ -19,9 +19,15 @@ const iconButtonClassName =
 
 type DashboardHeaderProps = {
   user?: SidebarUser;
+  isRightSidebarOpen?: boolean;
+  onToggleRightSidebar?: () => void;
 };
 
-export function DashboardHeader({ user = DEFAULT_USER }: DashboardHeaderProps) {
+export function DashboardHeader({
+  user = DEFAULT_USER,
+  isRightSidebarOpen = false,
+  onToggleRightSidebar,
+}: DashboardHeaderProps) {
   const { isOpen, toggleSidebar } = useSidebar();
   const [query, setQuery] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -119,10 +125,15 @@ export function DashboardHeader({ user = DEFAULT_USER }: DashboardHeaderProps) {
           <span aria-hidden="true" className="mx-1 hidden h-5 w-px bg-zinc-200 dark:bg-zinc-800 sm:block" />
           <button
             type="button"
-            disabled
-            aria-label="Right panel controls unavailable"
-            title="The right dashboard panel is not configured yet"
-            className={iconButtonClassName}
+            onClick={onToggleRightSidebar}
+            aria-label={isRightSidebarOpen ? "Close dashboard insights" : "Open dashboard insights"}
+            aria-pressed={isRightSidebarOpen}
+            title={isRightSidebarOpen ? "Close dashboard insights" : "Open dashboard insights"}
+            className={`${iconButtonClassName} ${
+              isRightSidebarOpen
+                ? "bg-violet-50 text-violet-700 dark:bg-violet-500/15 dark:text-violet-300"
+                : ""
+            }`}
           >
             <PanelRight aria-hidden="true" className="size-[18px]" strokeWidth={1.8} />
           </button>
