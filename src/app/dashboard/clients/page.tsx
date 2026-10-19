@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ClientsSearchBar } from "@/components/dashboard/clients/clients-search-bar";
+import { ClientsView } from "@/components/dashboard/clients/clients-view";
 import { StatCard } from "@/components/dashboard/overview/stat-card";
 import { Clock, FileCheck2, FolderKanban, UsersRound } from "lucide-react";
 
@@ -65,15 +65,8 @@ export default function ClientsPage() {
         ))}
       </div>
 
-      {/* Toolbar / Search Component */}
-      <ClientsSearchBar />
-
-      {/* Empty State placeholder */}
-      <div className="flex min-h-100 flex-col items-center justify-center rounded-2xl border border-dashed border-zinc-200 p-8 text-center dark:border-zinc-800">
-        <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
-          Clients page is ready to be built.
-        </p>
-      </div>
+      {/* Clients Search Toolbar & Table */}
+      <ClientsView />
     </section>
   );
 }
