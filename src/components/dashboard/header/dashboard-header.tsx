@@ -115,12 +115,20 @@ export function DashboardHeader({
           </button>
           <button
             type="button"
-            disabled
-            aria-label="Notifications unavailable"
-            title="Notifications are not available yet"
-            className={iconButtonClassName}
+            onClick={onToggleRightSidebar}
+            aria-label={isRightSidebarOpen ? "Close notifications & action center" : "Open notifications & action center"}
+            title="Notifications & Action Center"
+            className={`${iconButtonClassName} relative ${
+              isRightSidebarOpen
+                ? "bg-violet-50 text-violet-700 dark:bg-violet-500/15 dark:text-violet-300"
+                : ""
+            }`}
           >
             <Bell aria-hidden="true" className="size-[18px]" strokeWidth={1.8} />
+            <span
+              aria-hidden="true"
+              className="absolute top-2 right-2 size-2 rounded-full bg-violet-600 ring-2 ring-white dark:bg-violet-400 dark:ring-zinc-900"
+            />
           </button>
           <span aria-hidden="true" className="mx-1 hidden h-5 w-px bg-zinc-200 dark:bg-zinc-800 sm:block" />
           <button

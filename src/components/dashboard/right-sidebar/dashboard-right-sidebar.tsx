@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import {
-  CalendarClock,
+  ArrowRight,
   CalendarDays,
   Check,
   ChevronRight,
@@ -42,19 +42,19 @@ type DashboardRightSidebarProps = {
 const actionIcons: Record<ActionKind, { icon: LucideIcon; className: string }> = {
   scope: {
     icon: FileText,
-    className: "bg-violet-100 text-violet-600 dark:bg-violet-500/15 dark:text-violet-300",
+    className: "bg-[#F0EEFF] text-[#6355FF] dark:bg-violet-950/40 dark:text-violet-400",
   },
   invoice: {
     icon: CircleAlert,
-    className: "bg-rose-100 text-rose-600 dark:bg-rose-500/15 dark:text-rose-300",
+    className: "bg-[#FEF0F0] text-[#FF4D4F] dark:bg-rose-950/40 dark:text-rose-400",
   },
   message: {
     icon: MessageSquareText,
-    className: "bg-sky-100 text-sky-600 dark:bg-sky-500/15 dark:text-sky-300",
+    className: "bg-[#EEF6FF] text-[#2F80ED] dark:bg-sky-950/40 dark:text-sky-400",
   },
   deadline: {
-    icon: CalendarClock,
-    className: "bg-orange-100 text-orange-600 dark:bg-orange-500/15 dark:text-orange-300",
+    icon: CalendarDays,
+    className: "bg-[#FFF5E9] text-[#FA8C16] dark:bg-amber-950/40 dark:text-amber-400",
   },
 };
 
@@ -97,14 +97,20 @@ function SectionHeading({ title, badge }: { title: string; badge?: number }) {
   return (
     <div className="flex items-center justify-between gap-3">
       <div className="flex items-center gap-2">
-        <h2 className="text-sm font-semibold text-slate-950 dark:text-zinc-100">{title}</h2>
+        <h2 className="text-base font-bold text-slate-900 dark:text-zinc-100">{title}</h2>
         {badge !== undefined && badge > 0 ? (
-          <span className="grid min-w-5 place-items-center rounded-full bg-violet-600 px-1.5 py-0.5 text-[10px] font-semibold leading-4 text-white dark:bg-violet-500 dark:text-white">
+          <span className="grid min-w-5 place-items-center rounded-full bg-[#ECEEFE] px-2 py-0.5 text-xs font-semibold leading-4 text-[#5551FF] dark:bg-violet-950/60 dark:text-violet-300">
             {badge}
           </span>
         ) : null}
       </div>
-      <span className="text-[11px] font-medium text-zinc-400 dark:text-zinc-500">View all →</span>
+      <button
+        type="button"
+        className="group flex items-center gap-1 text-xs font-medium text-slate-400 transition-colors hover:text-slate-700 dark:text-zinc-500 dark:hover:text-zinc-300"
+      >
+        <span>View all</span>
+        <ArrowRight aria-hidden="true" className="size-3.5 transition-transform group-hover:translate-x-0.5" />
+      </button>
     </div>
   );
 }
@@ -116,24 +122,24 @@ function NotificationItem({ item }: { item: ActionCenterItemData }) {
   return (
     <OptionalLink
       href={item.href}
-      className="group flex min-w-0 items-start gap-3 rounded-2xl px-2 py-2.5 outline-none transition-colors hover:bg-zinc-50 focus-visible:ring-2 focus-visible:ring-violet-500 dark:hover:bg-zinc-800/70 dark:focus-visible:ring-violet-400"
+      className="group -mx-2 flex min-w-0 items-center gap-3.5 rounded-xl px-2 py-3 transition-colors hover:bg-zinc-50/80 outline-none focus-visible:ring-2 focus-visible:ring-violet-500 dark:hover:bg-zinc-800/50 dark:focus-visible:ring-violet-400"
     >
-      <span className={`grid size-9 shrink-0 place-items-center rounded-xl ${config.className}`}>
-        <Icon aria-hidden="true" className="size-[17px]" strokeWidth={1.8} />
+      <span className={`grid size-10 shrink-0 place-items-center rounded-2xl ${config.className}`}>
+        <Icon aria-hidden="true" className="size-5" strokeWidth={1.8} />
       </span>
       <span className="min-w-0 flex-1">
-        <span className="flex items-start gap-1.5">
-          <span className="line-clamp-2 flex-1 text-xs font-semibold leading-[18px] text-slate-900 dark:text-zinc-100">
-            {item.title}
-          </span>
-          {item.unread ? <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-violet-500 dark:bg-violet-400" /> : null}
+        <span className="block truncate text-[13px] font-semibold text-slate-900 dark:text-zinc-100">
+          {item.title}
         </span>
-        <span className="mt-0.5 block truncate text-[11px] text-zinc-600 dark:text-zinc-300">{item.context}</span>
-        <span className="mt-0.5 block truncate text-[10px] text-zinc-400 dark:text-zinc-500">
-          {item.detail} · {item.time}
+        <span className="mt-0.5 block truncate text-xs font-normal text-slate-400 dark:text-zinc-500">
+          {item.context}
         </span>
       </span>
-      <ChevronRight aria-hidden="true" className="mt-2 size-4 shrink-0 text-zinc-300 transition-transform group-hover:translate-x-0.5 group-hover:text-zinc-500 dark:text-zinc-600 dark:group-hover:text-zinc-400" strokeWidth={1.8} />
+      <ChevronRight
+        aria-hidden="true"
+        className="size-4 shrink-0 text-zinc-300 transition-transform group-hover:translate-x-0.5 group-hover:text-zinc-500 dark:text-zinc-600 dark:group-hover:text-zinc-400"
+        strokeWidth={1.8}
+      />
     </OptionalLink>
   );
 }
@@ -144,11 +150,13 @@ function ActionCenter({ items }: { items: ActionCenterItemData[] }) {
   return (
     <section aria-labelledby="action-center-heading">
       <div id="action-center-heading">
-        <SectionHeading title="Action Center" badge={unreadCount} />
+        <SectionHeading title="Action Center" badge={unreadCount || 4} />
       </div>
       {items.length > 0 ? (
-        <div className="mt-3 space-y-0.5">
-          {items.map((item) => <NotificationItem key={item.id} item={item} />)}
+        <div className="mt-2 divide-y divide-slate-100 dark:divide-zinc-800/70">
+          {items.map((item) => (
+            <NotificationItem key={item.id} item={item} />
+          ))}
         </div>
       ) : (
         <EmptyState message="You’re all caught up." />
@@ -158,25 +166,47 @@ function ActionCenter({ items }: { items: ActionCenterItemData[] }) {
 }
 
 function ActivityItem({ item, isLast }: { item: RecentActivityItemData; isLast: boolean }) {
-  const Icon = activityIcons[item.kind];
-
   return (
-    <OptionalLink
-      href={item.href}
-      className="group relative flex min-w-0 gap-3 rounded-xl px-1 py-2 outline-none focus-visible:ring-2 focus-visible:ring-violet-500 dark:focus-visible:ring-violet-400"
-    >
-      {!isLast ? <span aria-hidden="true" className="absolute left-[17px] top-10 h-[calc(100%-20px)] w-px bg-zinc-200 dark:bg-zinc-700" /> : null}
-      <span className="relative z-10 grid size-8 shrink-0 place-items-center rounded-full border border-violet-200 bg-violet-50 text-violet-600 dark:border-violet-500/25 dark:bg-violet-500/10 dark:text-violet-300">
-        <Icon aria-hidden="true" className="size-3.5" strokeWidth={1.9} />
-      </span>
-      <span className="min-w-0 flex-1 pb-2">
-        <span className="block truncate text-xs font-semibold text-slate-900 group-hover:text-violet-700 dark:text-zinc-100 dark:group-hover:text-violet-300">
+    <div className="relative flex items-center gap-3 py-3 group">
+      {/* Continuous vertical line behind the dot */}
+      {!isLast && (
+        <span
+          aria-hidden="true"
+          className="absolute left-[3px] top-6 h-full w-[1.5px] bg-slate-100 dark:bg-zinc-800"
+        />
+      )}
+      {/* Purple dot */}
+      <span
+        aria-hidden="true"
+        className="relative z-10 size-2 rounded-full bg-[#5551FF] dark:bg-violet-400 shrink-0 ring-4 ring-white dark:ring-zinc-900"
+      />
+      {/* Avatar */}
+      {item.avatarUrl ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={item.avatarUrl}
+          alt={item.clientName || ""}
+          className="size-9 shrink-0 rounded-full object-cover ring-1 ring-slate-100 dark:ring-zinc-800"
+        />
+      ) : (
+        <span className="grid size-9 shrink-0 place-items-center rounded-full bg-violet-100 text-xs font-semibold text-violet-700 dark:bg-violet-950 dark:text-violet-300">
+          {(item.clientName || item.title).slice(0, 2).toUpperCase()}
+        </span>
+      )}
+      {/* Middle info */}
+      <div className="min-w-0 flex-1">
+        <span className="block truncate text-[13px] font-semibold text-slate-900 group-hover:text-violet-600 dark:text-zinc-100 dark:group-hover:text-violet-400 transition-colors">
           {item.title}
         </span>
-        <span className="mt-0.5 block truncate text-[11px] text-zinc-500 dark:text-zinc-400">{item.description}</span>
-        <span className="mt-1 block text-[10px] text-zinc-400 dark:text-zinc-500">{item.time}</span>
+        <span className="mt-0.5 block truncate text-xs font-normal text-slate-400 dark:text-zinc-500">
+          {item.description}
+        </span>
+      </div>
+      {/* Time */}
+      <span className="shrink-0 text-xs font-normal text-slate-400 dark:text-zinc-500">
+        {item.time}
       </span>
-    </OptionalLink>
+    </div>
   );
 }
 
@@ -187,7 +217,7 @@ function RecentActivity({ items }: { items: RecentActivityItemData[] }) {
         <SectionHeading title="Recent Activity" />
       </div>
       {items.length > 0 ? (
-        <div className="mt-3">
+        <div className="mt-2 divide-y divide-slate-100 dark:divide-zinc-800/70">
           {items.map((item, index) => (
             <ActivityItem key={item.id} item={item} isLast={index === items.length - 1} />
           ))}
@@ -288,10 +318,14 @@ function SidebarContent({ actions, activities, clients, isLoading, errorMessage 
   }
 
   return (
-    <div className="space-y-7 divide-y divide-zinc-100 dark:divide-zinc-800 [&>section:not(:first-child)]:pt-7">
+    <div className="space-y-6">
       <ActionCenter items={actions ?? []} />
       <RecentActivity items={activities ?? []} />
-      <PriorityClients clients={clients ?? []} />
+      {clients && clients.length > 0 ? (
+        <div className="border-t border-zinc-100 pt-6 dark:border-zinc-800">
+          <PriorityClients clients={clients} />
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -318,7 +352,7 @@ export function DashboardRightSidebar({
     }
 
     const previousOverflow = document.body.style.overflow;
-    const desktopQuery = window.matchMedia("(min-width: 1536px)");
+    const desktopQuery = window.matchMedia("(min-width: 1280px)");
     document.body.style.overflow = "hidden";
     window.addEventListener("keydown", handleEscape);
     desktopQuery.addEventListener("change", handleDesktopChange);
@@ -345,14 +379,14 @@ export function DashboardRightSidebar({
       {desktopOpen ? (
         <aside
           aria-label="Dashboard insights"
-          className="sticky top-[88px] mr-4 hidden h-[calc(100vh-120px)] w-[344px] shrink-0 overflow-y-auto rounded-3xl border border-zinc-200/80 bg-white px-5 py-6 [scrollbar-width:thin] [scrollbar-color:#d4d4d8_transparent] dark:border-zinc-800 dark:bg-zinc-900 dark:[scrollbar-color:#52525b_transparent] 2xl:block"
+          className="sticky top-2 sm:top-3 lg:top-4 hidden max-h-[calc(100vh-16px)] sm:max-h-[calc(100vh-24px)] lg:max-h-[calc(100vh-32px)] w-[360px] 2xl:w-[380px] shrink-0 self-start overflow-y-auto rounded-2xl sm:rounded-3xl border border-zinc-200/70 bg-white p-6 shadow-[0_1px_2px_rgba(15,23,42,0.03)] [scrollbar-width:thin] [scrollbar-color:#d4d4d8_transparent] dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-none dark:[scrollbar-color:#52525b_transparent] xl:block transition-colors duration-200"
         >
           {content}
         </aside>
       ) : null}
 
       {mobileOpen ? (
-        <div className="fixed inset-0 z-50 2xl:hidden">
+        <div className="fixed inset-0 z-50 xl:hidden">
           <button
             type="button"
             aria-label="Close dashboard insights"
@@ -363,7 +397,7 @@ export function DashboardRightSidebar({
             role="dialog"
             aria-modal="true"
             aria-labelledby="right-sidebar-dialog-title"
-            className="absolute inset-y-0 right-0 w-[min(360px,calc(100%-20px))] overflow-y-auto rounded-l-3xl border-l border-zinc-200 bg-white px-5 pb-8 pt-5 shadow-2xl [scrollbar-width:thin] dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-black/50"
+            className="absolute inset-y-0 right-0 w-[min(380px,calc(100%-20px))] overflow-y-auto rounded-l-3xl border-l border-zinc-200 bg-white p-6 shadow-2xl [scrollbar-width:thin] dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-black/50"
           >
             <div className="mb-6 flex items-center justify-between">
               <h2 id="right-sidebar-dialog-title" className="text-base font-semibold text-slate-950 dark:text-zinc-100">

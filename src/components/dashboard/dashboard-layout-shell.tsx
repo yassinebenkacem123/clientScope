@@ -14,13 +14,13 @@ type DashboardLayoutShellProps = {
 };
 
 function subscribeToDesktopBreakpoint(callback: () => void) {
-  const mediaQuery = window.matchMedia("(min-width: 1536px)");
+  const mediaQuery = window.matchMedia("(min-width: 1280px)");
   mediaQuery.addEventListener("change", callback);
   return () => mediaQuery.removeEventListener("change", callback);
 }
 
 function getDesktopBreakpointSnapshot() {
-  return window.matchMedia("(min-width: 1536px)").matches;
+  return window.matchMedia("(min-width: 1280px)").matches;
 }
 
 function getDesktopBreakpointServerSnapshot() {
@@ -62,22 +62,25 @@ export function DashboardLayoutShell({
           isOpen ? "lg:pl-[312px]" : "lg:pl-4"
         }`}
       >
-        <div className="min-h-[calc(100vh-80px)] overflow-hidden rounded-2xl border border-zinc-200/70 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.03)] dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-none sm:min-h-[calc(100vh-88px)] sm:rounded-3xl lg:min-h-[calc(100vh-32px)] transition-colors duration-200">
-          <DashboardHeader
-            user={user}
-            isRightSidebarOpen={isDesktopViewport ? isRightDesktopOpen : isRightMobileOpen}
-            onToggleRightSidebar={toggleRightSidebar}
-          />
-          <div className="mx-auto flex w-full max-w-[1800px] items-start">
-            <div className="min-w-0 flex-1 px-5 py-8 sm:px-8 lg:px-10 lg:py-10">
+        <div className="flex items-start gap-4">
+          {/* Main Dashboard Card */}
+          <div className="min-w-0 flex-1 overflow-hidden rounded-2xl border border-zinc-200/70 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.03)] dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-none sm:min-h-[calc(100vh-32px)] sm:rounded-3xl transition-colors duration-200">
+            <DashboardHeader
+              user={user}
+              isRightSidebarOpen={isDesktopViewport ? isRightDesktopOpen : isRightMobileOpen}
+              onToggleRightSidebar={toggleRightSidebar}
+            />
+            <div className="px-5 py-8 sm:px-8 lg:px-10 lg:py-10">
               {children}
             </div>
-            <DashboardRightSidebar
-              desktopOpen={isRightDesktopOpen}
-              mobileOpen={isRightMobileOpen}
-              onCloseMobile={closeRightMobileSidebar}
-            />
           </div>
+
+          {/* Right Insights & Action Center Card (outside the main dashboard card) */}
+          <DashboardRightSidebar
+            desktopOpen={isRightDesktopOpen}
+            mobileOpen={isRightMobileOpen}
+            onCloseMobile={closeRightMobileSidebar}
+          />
         </div>
       </main>
     </div>

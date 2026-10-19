@@ -86,8 +86,8 @@ export function CompletedTasksChart({
           </span>
         </div>
 
-        {/* Balanced Chart + Legend Container */}
-        <div className="mt-7 flex flex-col sm:flex-row items-center justify-between gap-6 sm:gap-7">
+        {/* Stacked Chart + Legend (Legend after the statistic circle) */}
+        <div className="mt-6 flex flex-col items-center gap-6">
           {/* Well-proportioned Donut Chart Canvas */}
           <div className="relative size-48 sm:size-52 shrink-0">
             <ResponsiveContainer width="100%" height="100%">
@@ -190,8 +190,8 @@ export function CompletedTasksChart({
             </div>
           </div>
 
-          {/* Right Side Breakdown Legend */}
-          <div className="flex-1 w-full space-y-4" role="list">
+          {/* Breakdown Legend Positioned After (Underneath) the Circle */}
+          <div className="w-full space-y-1 divide-y divide-zinc-100 dark:divide-zinc-800/60" role="list">
             {tasks.map((item, index) => {
               const isHovered = hoveredIndex === index;
               return (
@@ -200,7 +200,7 @@ export function CompletedTasksChart({
                   role="listitem"
                   onMouseEnter={() => setHoveredIndex(index)}
                   onMouseLeave={() => setHoveredIndex(null)}
-                  className={`flex items-center justify-between gap-4 transition-colors cursor-pointer rounded-lg px-2.5 py-1.5 -mx-2 ${
+                  className={`flex items-center justify-between gap-4 transition-colors cursor-pointer rounded-xl px-2.5 py-2 ${
                     isHovered
                       ? "bg-zinc-50 dark:bg-zinc-800/60"
                       : "hover:bg-zinc-50/70 dark:hover:bg-zinc-800/40"
@@ -210,9 +210,16 @@ export function CompletedTasksChart({
                   <div className="flex items-center gap-2.5 min-w-0">
                     <span
                       aria-hidden="true"
-                      className="size-2 rounded-full shrink-0"
+                      className="size-2 rounded-full shrink-0 dark:hidden"
                       style={{
                         backgroundColor: item.lightColor,
+                      }}
+                    />
+                    <span
+                      aria-hidden="true"
+                      className="hidden size-2 rounded-full shrink-0 dark:block"
+                      style={{
+                        backgroundColor: item.darkColor,
                       }}
                     />
                     <span className="text-[14px] font-normal tracking-[-0.01em] text-slate-900 dark:text-zinc-100 truncate">
@@ -222,10 +229,10 @@ export function CompletedTasksChart({
 
                   {/* Right Percentage & Count */}
                   <div className="flex items-baseline gap-2.5 shrink-0">
-                    <span className="text-[11px] text-zinc-400 dark:text-zinc-500 tabular-nums hidden sm:inline">
+                    <span className="text-xs text-zinc-400 dark:text-zinc-500 tabular-nums">
                       {item.count} tasks
                     </span>
-                    <span className="text-[14px] font-medium tracking-tight text-slate-950 dark:text-zinc-100 tabular-nums">
+                    <span className="text-[14px] font-semibold tracking-tight text-slate-950 dark:text-zinc-100 tabular-nums">
                       {item.percentage}%
                     </span>
                   </div>
