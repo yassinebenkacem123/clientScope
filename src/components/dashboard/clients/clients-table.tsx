@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import { Calendar, Check, MoreHorizontal } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Calendar, Check, ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
 import { DEFAULT_CLIENTS, type ClientRecord, type ClientStatus } from "./clients-data";
 
 type ClientsTableProps = {
   clients?: ClientRecord[];
   searchQuery?: string;
   className?: string;
+  defaultPageSize?: number;
 };
 
 const statusStyles: Record<
@@ -43,9 +44,12 @@ export function ClientsTable({
   clients = DEFAULT_CLIENTS,
   searchQuery = "",
   className = "",
+  defaultPageSize = 5,
 }: ClientsTableProps) {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set(["cl-4"]));
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(defaultPageSize);
 
   const filteredClients = clients.filter((client) => {
     if (!searchQuery.trim()) return true;
@@ -59,15 +63,28 @@ export function ClientsTable({
     );
   });
 
-  const isAllSelected =
-    filteredClients.length > 0 && filteredClients.every((c) => selectedIds.has(c.id));
+  const totalPages = Math.max(1, Math.ceil(filteredClients.length / pageSize));
+  const safePage = Math.min(currentPage, totalPages);
 
-  function toggleSelectAll() {
-    if (isAllSelected) {
-      setSelectedIds(new Set());
+  // Reset to page 1 if search query changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
+
+  const startIndex = (safePage - 1) * pageSize;
+  const paginatedClients = filteredClients.slice(startIndex, startIndex + pageSize);
+
+  const isAllPageSelected =
+    paginatedClients.length > 0 && paginatedClients.every((c) => selectedIds.has(c.id));
+
+  function toggleSelectPage() {
+    const next = new Set(selectedIds);
+    if (isAllPageSelected) {
+      paginatedClients.forEach((c) => next.delete(c.id));
     } else {
-      setSelectedIds(new Set(filteredClients.map((c) => c.id)));
+      paginatedClients.forEach((c) => next.add(c.id));
     }
+    setSelectedIds(next);
   }
 
   function toggleRow(id: string) {
@@ -80,6 +97,22 @@ export function ClientsTable({
     setSelectedIds(next);
   }
 
+  function getPageNumbers() {
+    const pages: (number | "...")[] = [];
+    if (totalPages <= 5) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      pages.push(1);
+      if (safePage > 3) pages.push("...");
+      const start = Math.max(2, safePage - 1);
+      const end = Math.min(totalPages - 1, safePage + 1);
+      for (let i = start; i <= end; i++) pages.push(i);
+      if (safePage < totalPages - 2) pages.push("...");
+      pages.push(totalPages);
+    }
+    return pages;
+  }
+
   return (
     <div className={`w-full overflow-hidden rounded-2xl bg-white transition-colors dark:bg-zinc-900 ${className}`}>
       <div className="w-full overflow-x-auto scrollbar-thin [scrollbar-color:#d4d4d8_transparent] dark:[scrollbar-color:#52525b_transparent]">
@@ -90,15 +123,15 @@ export function ClientsTable({
               <th scope="col" className="w-12 py-3.5 pl-4 pr-2">
                 <button
                   type="button"
-                  onClick={toggleSelectAll}
-                  aria-label={isAllSelected ? "Deselect all rows" : "Select all rows"}
+                  onClick={toggleSelectPage}
+                  aria-label={isAllPageSelected ? "Deselect all rows on this page" : "Select all rows on this page"}
                   className={`grid size-4.5 place-items-center rounded-md border transition-colors ${
-                    isAllSelected
+                    isAllPageSelected
                       ? "border-slate-900 bg-slate-900 text-white dark:border-white dark:bg-white dark:text-slate-950"
                       : "border-zinc-300 bg-white hover:border-zinc-400 dark:border-zinc-700 dark:bg-zinc-800 dark:hover:border-zinc-600"
                   }`}
                 >
-                  {isAllSelected ? (
+                  {isAllPageSelected ? (
                     <Check aria-hidden="true" className="size-3 stroke-3" />
                   ) : null}
                 </button>
@@ -132,7 +165,7 @@ export function ClientsTable({
 
           {/* Table Body */}
           <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800/70">
-            {filteredClients.map((client) => {
+            {paginatedClients.map((client) => {
               const isSelected = selectedIds.has(client.id);
               const status = statusStyles[client.status];
 
@@ -289,7 +322,7 @@ export function ClientsTable({
               );
             })}
 
-            {filteredClients.length === 0 ? (
+            {paginatedClients.length === 0 ? (
               <tr>
                 <td colSpan={9} className="py-12 text-center text-zinc-400 dark:text-zinc-500">
                   No clients found matching &ldquo;{searchQuery}&rdquo;
@@ -300,16 +333,102 @@ export function ClientsTable({
         </table>
       </div>
 
-      {/* Table Footer info */}
-      <div className="flex items-center justify-between border-t border-zinc-100 px-4 py-3 text-xs text-zinc-400 transition-colors dark:border-zinc-800 dark:text-zinc-500">
-        <span>
-          Showing {filteredClients.length} of {clients.length} clients
-        </span>
-        {selectedIds.size > 0 ? (
-          <span className="font-medium text-slate-900 dark:text-zinc-200">
-            {selectedIds.size} client{selectedIds.size > 1 ? "s" : ""} selected
+      {/* Table Pagination & Footer Controls */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-zinc-100 px-4 py-3 text-xs text-zinc-500 transition-colors dark:border-zinc-800 dark:text-zinc-400">
+        {/* Left Status info */}
+        <div className="flex items-center gap-3">
+          <span>
+            Showing <strong className="font-semibold text-slate-900 dark:text-zinc-200">{filteredClients.length > 0 ? startIndex + 1 : 0}</strong> to{" "}
+            <strong className="font-semibold text-slate-900 dark:text-zinc-200">
+              {Math.min(startIndex + pageSize, filteredClients.length)}
+            </strong>{" "}
+            of <strong className="font-semibold text-slate-900 dark:text-zinc-200">{filteredClients.length}</strong> clients
           </span>
-        ) : null}
+          {selectedIds.size > 0 ? (
+            <span className="rounded-md bg-zinc-100 px-2 py-0.5 text-[11px] font-medium text-slate-900 dark:bg-zinc-800 dark:text-zinc-200">
+              {selectedIds.size} selected
+            </span>
+          ) : null}
+        </div>
+
+        {/* Right Pagination Controls */}
+        <div className="flex items-center gap-3">
+          {/* Rows per page selector */}
+          <div className="flex items-center gap-1.5">
+            <label htmlFor="clients-per-page" className="text-zinc-400 dark:text-zinc-500">
+              Per page:
+            </label>
+            <select
+              id="clients-per-page"
+              value={pageSize}
+              onChange={(e) => {
+                setPageSize(Number(e.target.value));
+                setCurrentPage(1);
+              }}
+              className="h-7 rounded-lg border border-zinc-200 bg-white px-2 text-xs text-slate-800 outline-none hover:border-zinc-300 focus:border-zinc-400 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200"
+            >
+              <option value={5}>5</option>
+              <option value={8}>8</option>
+              <option value={10}>10</option>
+              <option value={15}>15</option>
+            </select>
+          </div>
+
+          {/* Navigation Buttons */}
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              disabled={safePage <= 1}
+              onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+              aria-label="Previous page"
+              className="grid size-7.5 place-items-center rounded-lg border border-zinc-200 bg-white text-zinc-600 transition-colors hover:bg-zinc-50 hover:text-zinc-950 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-white disabled:hover:text-zinc-600 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700/60 dark:hover:text-zinc-100 dark:disabled:hover:bg-zinc-800"
+            >
+              <ChevronLeft aria-hidden="true" className="size-4" strokeWidth={1.8} />
+            </button>
+
+            {/* Numeric Page Buttons */}
+            {getPageNumbers().map((pageNum, idx) => {
+              if (pageNum === "...") {
+                return (
+                  <span
+                    key={`ellipsis-${idx}`}
+                    className="grid size-7.5 place-items-center text-zinc-400 dark:text-zinc-500 select-none"
+                  >
+                    …
+                  </span>
+                );
+              }
+
+              const isActive = pageNum === safePage;
+              return (
+                <button
+                  key={pageNum}
+                  type="button"
+                  onClick={() => setCurrentPage(pageNum)}
+                  aria-label={`Go to page ${pageNum}`}
+                  aria-current={isActive ? "page" : undefined}
+                  className={`grid size-7.5 place-items-center rounded-lg text-xs font-medium transition-colors ${
+                    isActive
+                      ? "bg-slate-900 text-white dark:bg-white dark:text-slate-950 shadow-2xs font-semibold"
+                      : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
+                  }`}
+                >
+                  {pageNum}
+                </button>
+              );
+            })}
+
+            <button
+              type="button"
+              disabled={safePage >= totalPages}
+              onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+              aria-label="Next page"
+              className="grid size-7.5 place-items-center rounded-lg border border-zinc-200 bg-white text-zinc-600 transition-colors hover:bg-zinc-50 hover:text-zinc-950 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-white disabled:hover:text-zinc-600 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700/60 dark:hover:text-zinc-100 dark:disabled:hover:bg-zinc-800"
+            >
+              <ChevronRight aria-hidden="true" className="size-4" strokeWidth={1.8} />
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
