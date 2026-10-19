@@ -165,7 +165,6 @@ export function AddClientModal({
         {/* Header */}
         <div className="flex items-center justify-between border-b border-zinc-100 px-6 py-5 dark:border-zinc-800">
           <div className="flex items-center gap-2.5">
-         
             <div>
               <h2
                 id="add-client-dialog-title"
