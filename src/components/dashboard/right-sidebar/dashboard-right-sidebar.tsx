@@ -172,7 +172,7 @@ function ActivityItem({ item, isLast }: { item: RecentActivityItemData; isLast: 
       {!isLast && (
         <span
           aria-hidden="true"
-          className="absolute left-[3px] top-6 h-full w-[1.5px] bg-slate-100 dark:bg-zinc-800"
+          className="absolute left-0.75 top-6 h-full w-[1.5px] bg-slate-100 dark:bg-zinc-800"
         />
       )}
       {/* Purple dot */}
@@ -379,7 +379,7 @@ export function DashboardRightSidebar({
       {desktopOpen ? (
         <aside
           aria-label="Dashboard insights"
-          className="sticky top-2 sm:top-3 lg:top-4 hidden max-h-[calc(100vh-16px)] sm:max-h-[calc(100vh-24px)] lg:max-h-[calc(100vh-32px)] w-[360px] 2xl:w-[380px] shrink-0 self-start overflow-y-auto rounded-2xl sm:rounded-3xl border border-zinc-200/70 bg-white p-6 shadow-[0_1px_2px_rgba(15,23,42,0.03)] [scrollbar-width:thin] [scrollbar-color:#d4d4d8_transparent] dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-none dark:[scrollbar-color:#52525b_transparent] xl:block transition-colors duration-200"
+          className="sticky top-2 sm:top-3 lg:top-4 hidden max-h-[calc(100vh-16px)] sm:max-h-[calc(100vh-24px)] lg:max-h-[calc(100vh-32px)] w-90 2xl:w-95 shrink-0 self-start overflow-y-auto rounded-2xl sm:rounded-3xl border border-zinc-200/70 bg-white p-6 shadow-[0_1px_2px_rgba(15,23,42,0.03)] scrollbar-thin [scrollbar-color:#d4d4d8_transparent] dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-none dark:[scrollbar-color:#52525b_transparent] xl:block transition-colors duration-200"
         >
           {content}
         </aside>
@@ -397,7 +397,7 @@ export function DashboardRightSidebar({
             role="dialog"
             aria-modal="true"
             aria-labelledby="right-sidebar-dialog-title"
-            className="absolute inset-y-0 right-0 w-[min(380px,calc(100%-20px))] overflow-y-auto rounded-l-3xl border-l border-zinc-200 bg-white p-6 shadow-2xl [scrollbar-width:thin] dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-black/50"
+            className="absolute inset-y-0 right-0 w-[min(380px,calc(100%-20px))] overflow-y-auto rounded-l-3xl border-l border-zinc-200 bg-white p-6 shadow-2xl scrollbar-thin dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-black/50"
           >
             <div className="mb-6 flex items-center justify-between">
               <h2 id="right-sidebar-dialog-title" className="text-base font-semibold text-slate-950 dark:text-zinc-100">
@@ -409,7 +409,7 @@ export function DashboardRightSidebar({
                 aria-label="Close dashboard insights"
                 className="grid size-9 place-items-center rounded-xl text-zinc-500 outline-none transition-colors hover:bg-zinc-100 hover:text-zinc-900 focus-visible:ring-2 focus-visible:ring-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100 dark:focus-visible:ring-zinc-400"
               >
-                <X aria-hidden="true" className="size-[18px]" strokeWidth={1.8} />
+                <X aria-hidden="true" className="size-4.5" strokeWidth={1.8} />
               </button>
             </div>
             {content}
