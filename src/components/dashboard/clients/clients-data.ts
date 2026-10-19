@@ -1,5 +1,17 @@
 export type ClientStatus = "in-progress" | "complete" | "pending" | "approved" | "rejected";
 
+export type ClientSortOption =
+  | "recent"
+  | "name-asc"
+  | "name-desc"
+  | "projects-desc"
+  | "id-asc";
+
+export type ClientFilterState = {
+  status: ClientStatus | "all";
+  activity: "all" | "active" | "inactive";
+};
+
 export type ClientRecord = {
   id: string;
   clientId: string;

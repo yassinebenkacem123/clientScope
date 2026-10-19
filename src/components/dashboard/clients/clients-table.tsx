@@ -2,11 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { Calendar, Check, ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
-import { DEFAULT_CLIENTS, type ClientRecord, type ClientStatus } from "./clients-data";
+import { DEFAULT_CLIENTS, type ClientFilterState, type ClientRecord, type ClientSortOption, type ClientStatus } from "./clients-data";
 
 type ClientsTableProps = {
   clients?: ClientRecord[];
   searchQuery?: string;
+  filterState?: ClientFilterState;
+  sortOption?: ClientSortOption;
   className?: string;
   defaultPageSize?: number;
 };
@@ -43,6 +45,8 @@ const statusStyles: Record<
 export function ClientsTable({
   clients = DEFAULT_CLIENTS,
   searchQuery = "",
+  filterState = { status: "all", activity: "all" },
+  sortOption = "recent",
   className = "",
   defaultPageSize = 5,
 }: ClientsTableProps) {
@@ -51,28 +55,61 @@ export function ClientsTable({
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(defaultPageSize);
 
+  // 1. Filter clients by search, status, and active projects
   const filteredClients = clients.filter((client) => {
-    if (!searchQuery.trim()) return true;
-    const q = searchQuery.toLowerCase();
-    return (
-      client.clientId.toLowerCase().includes(q) ||
-      client.user.name.toLowerCase().includes(q) ||
-      client.project.toLowerCase().includes(q) ||
-      client.contact.toLowerCase().includes(q) ||
-      client.statusLabel.toLowerCase().includes(q)
-    );
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      const matchesSearch =
+        client.clientId.toLowerCase().includes(q) ||
+        client.user.name.toLowerCase().includes(q) ||
+        client.project.toLowerCase().includes(q) ||
+        client.contact.toLowerCase().includes(q) ||
+        client.statusLabel.toLowerCase().includes(q);
+      if (!matchesSearch) return false;
+    }
+
+    if (filterState.status !== "all" && client.status !== filterState.status) {
+      return false;
+    }
+
+    if (filterState.activity === "active" && client.activeProjects <= 0) {
+      return false;
+    }
+
+    if (filterState.activity === "inactive" && client.activeProjects > 0) {
+      return false;
+    }
+
+    return true;
   });
 
-  const totalPages = Math.max(1, Math.ceil(filteredClients.length / pageSize));
+  // 2. Sort clients
+  const sortedClients = [...filteredClients].sort((a, b) => {
+    switch (sortOption) {
+      case "name-asc":
+        return a.user.name.localeCompare(b.user.name);
+      case "name-desc":
+        return b.user.name.localeCompare(a.user.name);
+      case "projects-desc":
+        return b.activeProjects - a.activeProjects;
+      case "id-asc":
+        return a.clientId.localeCompare(b.clientId);
+      case "recent":
+      default:
+        return 0;
+    }
+  });
+
+  const totalPages = Math.max(1, Math.ceil(sortedClients.length / pageSize));
   const safePage = Math.min(currentPage, totalPages);
 
-  // Reset to page 1 if search query changes
+  // Reset to page 1 if search query or filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery]);
+  }, [searchQuery, filterState, sortOption]);
 
   const startIndex = (safePage - 1) * pageSize;
-  const paginatedClients = filteredClients.slice(startIndex, startIndex + pageSize);
+  const paginatedClients = sortedClients.slice(startIndex, startIndex + pageSize);
 
   const isAllPageSelected =
     paginatedClients.length > 0 && paginatedClients.every((c) => selectedIds.has(c.id));
