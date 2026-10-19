@@ -248,7 +248,7 @@ export function ClientsTable({
                   <td className="py-3.5 px-3 whitespace-nowrap">
                     <div className="flex items-center gap-2.5">
                       <img
-                        src={client.user.avatarUrl}
+                        src={client.user.avatarUrl || "/avatars/avatar-1.png"}
                         alt=""
                         className="size-6 shrink-0 rounded-full object-cover ring-1 ring-zinc-200/80 dark:ring-zinc-700"
                       />
