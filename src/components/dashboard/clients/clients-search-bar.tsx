@@ -1,8 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { ArrowUpDown, Check, ListFilter, Plus, RotateCcw, Search, X } from "lucide-react";
 import type { ClientFilterState, ClientSortOption, ClientStatus } from "./clients-data";
+
+const subscribeToPlatform = () => () => {};
+const getShortcutText = () => /Mac|iPhone|iPad|iPod/.test(navigator.userAgent) ? "⌘K" : "Ctrl+K";
+const getServerShortcutText = () => "⌘K";
 
 type ClientsSearchBarProps = {
   value?: string;
@@ -49,7 +53,7 @@ export function ClientsSearchBar({
 }: ClientsSearchBarProps) {
   const [internalValue, setInternalValue] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
-  const [shortcutText, setShortcutText] = useState("⌘K");
+  const shortcutText = useSyncExternalStore(subscribeToPlatform, getShortcutText, getServerShortcutText);
 
   // Dropdown popover states
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -65,9 +69,6 @@ export function ClientsSearchBar({
 
   // Keyboard shortcut listener for Ctrl+K / ⌘K
   useEffect(() => {
-    const isMac = typeof window !== "undefined" && /Mac|iPhone|iPad|iPod/.test(navigator.userAgent);
-    setShortcutText(isMac ? "⌘K" : "Ctrl+K");
-
     function handleKeyDown(event: KeyboardEvent) {
       if (
         (event.key.toLowerCase() === "k" && (event.metaKey || event.ctrlKey)) ||

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Calendar, Check, ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
 import { DEFAULT_CLIENTS, type ClientFilterState, type ClientRecord, type ClientSortOption, type ClientStatus } from "./clients-data";
 
@@ -54,6 +54,14 @@ export function ClientsTable({
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(defaultPageSize);
+  const filterKey = JSON.stringify([searchQuery, filterState.status, filterState.activity, sortOption]);
+  const [previousFilterKey, setPreviousFilterKey] = useState(filterKey);
+
+  // Reset before rendering children when the filter values actually change.
+  if (previousFilterKey !== filterKey) {
+    setPreviousFilterKey(filterKey);
+    setCurrentPage(1);
+  }
 
   // 1. Filter clients by search, status, and active projects
   const filteredClients = clients.filter((client) => {
@@ -102,11 +110,6 @@ export function ClientsTable({
 
   const totalPages = Math.max(1, Math.ceil(sortedClients.length / pageSize));
   const safePage = Math.min(currentPage, totalPages);
-
-  // Reset to page 1 if search query or filters change
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchQuery, filterState, sortOption]);
 
   const startIndex = (safePage - 1) * pageSize;
   const paginatedClients = sortedClients.slice(startIndex, startIndex + pageSize);
