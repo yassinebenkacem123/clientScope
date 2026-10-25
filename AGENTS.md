@@ -34,3 +34,13 @@ Show: changed files; commands run; schema validation status; client generation s
 - Do not use Prisma directly from the browser; all Prisma access must be trusted server code.
 - **Theme parity (Dark and Light mode)**: Whenever writing or modifying UI components, layouts, pages, or widgets, always implement complete support for both Light Mode and Dark Mode. Never write single-mode CSS or Tailwind classes without their `dark:` counterparts. Refer to `.agents/rules/dark-light-mode.md` and `.agents/skills/dark-light-mode/SKILL.md`.
 
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+## This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->
