@@ -25,6 +25,8 @@ export type ClientRecord = {
   status: ClientStatus;
   statusLabel: string;
   lastActivity: string;
+  createdAt?: string;
+  isActive?: boolean;
 };
 
 export const DEFAULT_CLIENTS: ClientRecord[] = [

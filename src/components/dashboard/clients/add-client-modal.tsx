@@ -131,6 +131,8 @@ export function AddClientModal({
       status,
       statusLabel: statusOption ? statusOption.label : "In Progress",
       lastActivity: "Just now",
+      createdAt: new Date().toISOString(),
+      isActive: true,
     };
 
     onAddClient(newClient);

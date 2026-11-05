@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Calendar, Check, ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
 import { DEFAULT_CLIENTS, type ClientFilterState, type ClientRecord, type ClientSortOption, type ClientStatus } from "./clients-data";
 
@@ -80,11 +81,12 @@ export function ClientsTable({
       return false;
     }
 
-    if (filterState.activity === "active" && client.activeProjects <= 0) {
+    const isActive = client.isActive ?? client.activeProjects > 0;
+    if (filterState.activity === "active" && !isActive) {
       return false;
     }
 
-    if (filterState.activity === "inactive" && client.activeProjects > 0) {
+    if (filterState.activity === "inactive" && isActive) {
       return false;
     }
 
@@ -331,20 +333,13 @@ export function ClientsTable({
                             onClick={() => setActiveMenuId(null)}
                           />
                           <div className="absolute right-0 top-8 z-30 w-36 rounded-xl border border-zinc-200 bg-white py-1 shadow-lg dark:border-zinc-700 dark:bg-zinc-800">
-                            <button
-                              type="button"
+                            <Link
+                              href={`/dashboard/clients/${encodeURIComponent(client.id)}`}
                               onClick={() => setActiveMenuId(null)}
-                              className="w-full px-3 py-1.5 text-left text-xs text-zinc-700 hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-700/60"
+                              className="block w-full px-3 py-1.5 text-left text-xs text-zinc-700 hover:bg-zinc-50 focus-visible:outline-2 focus-visible:outline-slate-900 dark:text-zinc-300 dark:hover:bg-zinc-700/60 dark:focus-visible:outline-zinc-100"
                             >
                               View profile
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => setActiveMenuId(null)}
-                              className="w-full px-3 py-1.5 text-left text-xs text-zinc-700 hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-700/60"
-                            >
-                              Edit details
-                            </button>
+                            </Link>
                             <div className="my-1 border-t border-zinc-100 dark:border-zinc-700" />
                             <button
                               type="button"

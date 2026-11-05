@@ -4,10 +4,11 @@ import { useState } from "react";
 import { AddClientModal } from "./add-client-modal";
 import { ClientsSearchBar } from "./clients-search-bar";
 import { ClientsTable } from "./clients-table";
-import { DEFAULT_CLIENTS, type ClientFilterState, type ClientRecord, type ClientSortOption } from "./clients-data";
+import { type ClientFilterState, type ClientSortOption } from "./clients-data";
+import { useClients } from "./clients-provider";
 
 export function ClientsView() {
-  const [clients, setClients] = useState<ClientRecord[]>(DEFAULT_CLIENTS);
+  const { clients, addClient } = useClients();
   const [searchQuery, setSearchQuery] = useState("");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [filterState, setFilterState] = useState<ClientFilterState>({
@@ -15,10 +16,6 @@ export function ClientsView() {
     activity: "all",
   });
   const [sortOption, setSortOption] = useState<ClientSortOption>("recent");
-
-  function handleAddClient(newClient: ClientRecord) {
-    setClients((prev) => [newClient, ...prev]);
-  }
 
   return (
     <div className="space-y-4">
@@ -45,7 +42,7 @@ export function ClientsView() {
       <AddClientModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
-        onAddClient={handleAddClient}
+        onAddClient={addClient}
         existingCount={clients.length}
       />
     </div>
