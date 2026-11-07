@@ -4,10 +4,11 @@ import { TrendingUp } from "lucide-react";
 type StatCardProps = {
   label: string;
   value: string;
-  change: string;
+  change?: string;
   icon: LucideIcon;
   iconClassName: string;
   surfaceClassName: string;
+  wrapValue?: boolean;
 };
 
 export function StatCard({
@@ -17,6 +18,7 @@ export function StatCard({
   icon: Icon,
   iconClassName,
   surfaceClassName,
+  wrapValue = false,
 }: StatCardProps) {
   return (
     <article
@@ -28,17 +30,15 @@ export function StatCard({
       </div>
 
       <div className="mt-3 flex items-center gap-4 whitespace-nowrap">
-        <p className="text-[26px] font-semibold leading-none tracking-[0.08em] text-slate-950 dark:text-white">
+        <p className={`${wrapValue ? "min-w-0 whitespace-normal break-words text-xl tracking-normal" : "text-[26px] tracking-[0.08em]"} font-semibold leading-none text-slate-950 dark:text-white`}>
           {value}
         </p>
-        <span className="ml-auto text-xs font-medium text-slate-950 dark:text-zinc-200">
-          {change}
-        </span>
-        <TrendingUp
-          aria-hidden="true"
-          className="size-4 shrink-0 text-slate-950 dark:text-zinc-100"
-          strokeWidth={2.2}
-        />
+        {change !== undefined && (
+          <>
+            <span className="ml-auto text-xs font-medium text-slate-950 dark:text-zinc-200">{change}</span>
+            <TrendingUp aria-hidden="true" className="size-4 shrink-0 text-slate-950 dark:text-zinc-100" strokeWidth={2.2} />
+          </>
+        )}
       </div>
     </article>
   );

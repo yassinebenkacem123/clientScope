@@ -1,3 +1,5 @@
+import type { ClientOverviewData } from "./client-overview-data";
+
 export type ClientStatus = "in-progress" | "complete" | "pending" | "approved" | "rejected";
 
 export type ClientSortOption =
@@ -27,6 +29,13 @@ export type ClientRecord = {
   lastActivity: string;
   createdAt?: string;
   isActive?: boolean;
+  companyType?: string;
+  industry?: string;
+  primaryAccount?: string;
+  phone?: string;
+  billingStatus?: string;
+  tags?: string[];
+  overview?: ClientOverviewData;
 };
 
 export const DEFAULT_CLIENTS: ClientRecord[] = [
