@@ -6,6 +6,7 @@ import { BriefcaseBusiness, CalendarDays, Clock3, FileText, Inbox, Mail, MapPin,
 import { StatCard } from "../overview/stat-card";
 import { useClients } from "./clients-provider";
 import { selectClientOverview } from "./client-overview-data";
+import { getClientQuotes, latestClientQuotes, quoteDateKey, quoteStatistics } from "./client-quotes-data";
 
 const cardClass = "min-w-0 rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900 sm:p-6";
 const mutedClass = "text-sm text-zinc-500 dark:text-zinc-400";
@@ -40,6 +41,7 @@ export function ClientOverview({ clientId }: { clientId: string }) {
   const client = clients.find((item) => item.id === clientId);
   if (!client) notFound();
   const overview = selectClientOverview(client.id, client.overview, now ?? Infinity);
+  const openQuotes = client.quotes === undefined ? overview.openQuotes : quoteStatistics(latestClientQuotes(getClientQuotes(client)), quoteDateKey(now)).awaiting;
   const meeting = overview.nextMeeting;
   const duration = meeting?.endsAt ? Math.round((Date.parse(meeting.endsAt) - Date.parse(meeting.startsAt)) / 60_000) : undefined;
   const meetingUrl = meeting?.meetingUrl && /^https?:\/\//i.test(meeting.meetingUrl) ? meeting.meetingUrl : undefined;
@@ -58,7 +60,7 @@ export function ClientOverview({ clientId }: { clientId: string }) {
     <section aria-label="Client statistics" className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       <StatCard label="Active Projects" value={String(client.activeProjects)} icon={BriefcaseBusiness} iconClassName="text-violet-600 dark:text-violet-300" surfaceClassName="bg-[#F0F0FF] dark:bg-[#24213D]" />
       <StatCard wrapValue label="Pending Requests" value={overview.pendingRequests === undefined ? "Unavailable" : String(overview.pendingRequests)} icon={Inbox} iconClassName="text-blue-600 dark:text-blue-300" surfaceClassName="bg-[#E7F2FF] dark:bg-[#172C3F]" />
-      <StatCard wrapValue label="Open Quotes" value={overview.openQuotes === undefined ? "Unavailable" : String(overview.openQuotes)} icon={FileText} iconClassName="text-violet-600 dark:text-violet-300" surfaceClassName="bg-[#F0F0FF] dark:bg-[#24213D]" />
+      <StatCard wrapValue label="Open Quotes" value={openQuotes === undefined ? "Unavailable" : String(openQuotes)} icon={FileText} iconClassName="text-violet-600 dark:text-violet-300" surfaceClassName="bg-[#F0F0FF] dark:bg-[#24213D]" />
       <div className="min-w-0 space-y-2">
         <StatCard wrapValue label="Total Spend" value={overview.spend === undefined ? "Unavailable" : overview.spend.length === 0 ? "No payments" : overview.spend.length > 1 ? "Multiple currencies" : overview.spend[0]} icon={Wallet} iconClassName="text-sky-600 dark:text-sky-300" surfaceClassName="bg-[#E7F2FF] dark:bg-[#172C3F]" />
         {overview.spend && overview.spend.length > 1 && <ul aria-label="Paid totals by currency" className={`space-y-1 px-2 ${mutedClass}`}>{overview.spend.map((total) => <li key={total}>{total}</li>)}</ul>}

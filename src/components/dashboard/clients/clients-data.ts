@@ -1,4 +1,8 @@
 import type { ClientOverviewData } from "./client-overview-data";
+import type { ClientProject } from "./client-projects-data";
+import type { ClientFileRecord } from "./client-files-data";
+import type { ClientQuote } from "./client-quotes-data";
+import type { ClientNote } from "./client-notes-data";
 
 export type ClientStatus = "in-progress" | "complete" | "pending" | "approved" | "rejected";
 
@@ -36,6 +40,10 @@ export type ClientRecord = {
   billingStatus?: string;
   tags?: string[];
   overview?: ClientOverviewData;
+  projects?: ClientProject[];
+  files?: ClientFileRecord[];
+  quotes?: ClientQuote[];
+  notes?: ClientNote[];
 };
 
 export const DEFAULT_CLIENTS: ClientRecord[] = [
